@@ -10,10 +10,11 @@ DEFAULT_NETWORK="user"
 DEFAULT_TAP_INTERFACE="tap0"
 CLOUD_INIT_IMAGE=""
 TMUX_SESSION_NAME="vm-session"
+NO_ATTACH=0
 
 # Function to show usage
 usage() {
-  echo "Usage: $0 -i <vm_image> -c <vcpu> -m <memory> -p <host_port> [-C <cloud_init_image>] [-t <tmux_session_name>] [-n <network_type>] [-T <tap_interface>]"
+  echo "Usage: $0 -i <vm_image> -c <vcpu> -m <memory> -p <host_port> [-C <cloud_init_image>] [-t <tmux_session_name>] [-n <network_type>] [-T <tap_interface>] [-A]"
   echo "  -i  Path to the VM image"
   echo "  -c  Number of vCPUs (default: $DEFAULT_VCPU)"
   echo "  -m  Memory size in GB (default: $DEFAULT_MEMORY GB)"
@@ -22,11 +23,12 @@ usage() {
   echo "  -t  Optional: Tmux session name (default: $TMUX_SESSION_NAME)"
   echo "  -n  Network type: 'user' or 'tap' (default: $DEFAULT_NETWORK)"
   echo "  -T  TAP interface name (default: $DEFAULT_TAP_INTERFACE)"
+  echo "  -A  Do not attach to the tmux session"
   exit 1
 }
 
 # Parse command line options
-while getopts ":i:c:m:p:C:t:n:T:" opt; do
+while getopts ":i:c:m:p:C:t:n:T:A" opt; do
   case $opt in
     i) VM_IMAGE="$OPTARG" ;;
     c) VCPU="$OPTARG" ;;
@@ -36,6 +38,7 @@ while getopts ":i:c:m:p:C:t:n:T:" opt; do
     t) TMUX_SESSION_NAME="$OPTARG" ;;
     n) NETWORK_TYPE="$OPTARG" ;;
     T) TAP_INTERFACE="$OPTARG" ;;
+    A) NO_ATTACH=1 ;;
     *) usage ;;
   esac
 done
@@ -100,4 +103,6 @@ fi
 tmux send-keys -t $TMUX_SESSION_NAME "$QEMU_CMD" C-m
 
 # Step 7: Attach to the tmux session (optional)
-tmux attach -t $TMUX_SESSION_NAME
+if [ "$NO_ATTACH" -eq 0 ]; then
+  tmux attach -t $TMUX_SESSION_NAME
+fi

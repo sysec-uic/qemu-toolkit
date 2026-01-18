@@ -23,20 +23,19 @@ sudo apt install -y qemu-kvm cloud-utils genisoimage tmux
 3. SSH into the VM using the forwarded port (user networking).
 
 ## Quickstart
-### Ubuntu 25.04
+### Ubuntu 26.04
 ```
 # Step 0: Download a base cloud image into ./img
 mkdir -p ./img
 pushd ./img
-wget https://cloud-images.ubuntu.com/releases/plucky/release/ubuntu-25.04-server-cloudimg-amd64.img
-# wget https://fastly.mirror.pkgbuild.com/images/latest/Arch-Linux-x86_64-cloudimg.qcow2  # Arch Linux
+wget https://cloud-images.ubuntu.com/resolute/current/resolute-server-cloudimg-amd64.img
 popd
 
 # Step 1: Create VM image
-./create_vm_image.sh -b ./img/ubuntu-25.04-server-cloudimg-amd64.img -n ubuntu25_vm.img -u testuser -s 64G
+./create_vm_image.sh -b ./img/resolute-server-cloudimg-amd64.img -n ubuntu26_vm.img -u testuser -s 64G
 
 # Step 2: Launch VM in tmux
-./launch_vm.sh -i out/ubuntu25_vm.img -p 2020 -c 4 -m 4 -t ubuntu25-vm -C out/cloud-init-ubuntu25_vm.iso
+./launch_vm.sh -i out/ubuntu26_vm.img -p 2020 -c 4 -m 4 -t ubuntu26-vm -C out/cloud-init-ubuntu26_vm.iso
 
 # Step 3: SSH into VM
 ssh testuser@localhost -p 2020
@@ -60,6 +59,26 @@ popd
 # Step 3: SSH into VM
 ssh linux@localhost -p 2020
 # The default login password is ubuntu
+```
+
+## Batch Allocate Student VMs
+
+Use `allocate_vms.sh` to create and launch multiple VMs that share the same base image. Each VM gets an SSH port of `base_port + index`.
+
+```
+./allocate_vms.sh -b ./img/resolute-server-cloudimg-amd64.img -n 20 -p 3000 -u student -h oslab -i oslab -t oslab
+```
+
+Example connections:
+```
+ssh student00@localhost -p 3000
+ssh student01@localhost -p 3001
+... ...
+```
+
+To stop and remove a batch of allocated VMs:
+```
+./cleanup_vms.sh -n 20 -i oslab -t oslab -o out -S 0
 ```
 
 ## Scripts

@@ -3,7 +3,7 @@ set -e
 set -o pipefail
 
 # Default values for images
-DEFAULT_BASE_IMAGE="./img/noble-server-cloudimg-amd64.img"
+DEFAULT_BASE_IMAGE="./img/resolute-server-cloudimg-amd64.img"
 DEFAULT_OUT_DIR="out"
 DEFAULT_NEW_IMAGE="${DEFAULT_OUT_DIR}/custom_vm_image.img"
 DEFAULT_DISK_SIZE="10G" # Default disk size
