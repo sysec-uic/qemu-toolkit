@@ -3,7 +3,7 @@ set -e
 set -o pipefail
 
 # Default values for images
-DEFAULT_BASE_IMAGE="../img/jammy-server-cloudimg-amd64.img"
+DEFAULT_BASE_IMAGE="./img/noble-server-cloudimg-amd64.img"
 DEFAULT_OUT_DIR="out"
 DEFAULT_NEW_IMAGE="${DEFAULT_OUT_DIR}/custom_vm_image.img"
 DEFAULT_DISK_SIZE="10G" # Default disk size
@@ -112,16 +112,7 @@ EOF
 # Step 3: Create an ISO for cloud-init
 cloud-localds "$CLOUD_INIT_ISO" "$USER_DATA" "$META_DATA"
 
-# Step 4: Boot the VM with the new image
-#qemu-system-x86_64 \
-#  -m 2G \
-#  -smp 2 \
-#  -hda $NEW_IMAGE \
-#  -cdrom $CLOUD_INIT_ISO \
-#  -boot d \
-#  -net nic -net user,hostfwd=tcp::2222-:22 \
-#  -enable-kvm
-
+# Summary
 echo "VM image created: $NEW_IMAGE"
 echo "Cloud-init ISO created: $CLOUD_INIT_ISO"
 echo "Hostname: $VM_HOSTNAME, username: $VM_USERNAME, disk size: $DISK_SIZE"
